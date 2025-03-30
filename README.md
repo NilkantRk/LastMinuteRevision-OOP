@@ -3,31 +3,6 @@
 
 Here we have last minute revision notes of object oriented programming language. These questions will familiarize you with the most important object-oriented programming concepts and help you ace your job interviews :raised_hands:
 
----
-
-###
-
-#### Join us for all the latest offcampus job updates, webinar, hackathons, resume review and a lot more :heart::heart:
-
-<div align="left">
-  <a href="https://www.linkedin.com/in/amanchowdhury046/" target="_blank">
-    <img src="https://img.shields.io/static/v1?message=LinkedIn&logo=linkedin&label=&color=0077B5&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="linkedin logo"  />
-  </a>
-  <a href="https://www.youtube.com/@amanchowdhury046" target="_blank">
-    <img src="https://img.shields.io/static/v1?message=Youtube&logo=youtube&label=&color=FF0000&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="youtube logo"  />
-  </a>
-  <a href="https://telegram.me/offcampus_phodenge" target="_blank">
-    <img src="https://img.shields.io/static/v1?message=Telegram&logo=telegram&label=&color=2CA5E0&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="telegram logo"  />
-  </a>
-  <a href="https://www.instagram.com/aman_chowdhury_046/" target="_blank">
-    <img src="https://img.shields.io/static/v1?message=Instagram&logo=instagram&label=&color=E4405F&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="instagram logo"  />
-  </a>
-	<a href="https://whatsapp.com/channel/0029Va9Q0lkDZ4LYNx6ukw2u" target="_blank">
-    <img src="https://img.shields.io/static/v1?message=Whatsapp&logo=Whatsapp&label=&color=25D366&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="whatsapp logo"  />
-  </a>
-</div>
-
-###
 
 ---
 
@@ -935,61 +910,209 @@ int main(){
 >  The value of x=10
 
 
-#### Friend Function
+### **Friend Class and Friend Function in C++**
 
-**Answer**
-
-- Like a friend class, a friend function can be granted special access to private and protected members of a class in C++.
-- They are the non-member functions that can access and manipulate the private and protected members of the class for they are declared as friends.
-
-
-```C++
-#include <iostream>
-using namespace std;
- 
-class Base {
-private:
-    int a;
- 
-protected:
-    int b
- 
-public:
-    Base()
-    {
-        a = 1;
-        b = 2;
-    }
-     
-     // friend function declaration
-    friend void func(base& obj);
-};
- 
- 
-// friend function definition
-void func(base& obj)
-{
-    cout << "Private Variable: " << obj.a << endl;
-    cout << "Protected Variable: " << obj.b;
-}
- 
-// driver code
-int main()
-{
-    Base obj;
-    funcobj);
- 
-    return 0;
-    
- }
-```
-
-**Output**
->  Private Variable: 1 \
-Protected Variable: 2
-
+In C++, the **friend** keyword allows a class or a function to access the private and protected members of another class. This is useful when two or more classes or functions need to work closely together and require access to each other's private data.
 
 ---
+
+### **1. Friend Function**
+
+A **friend function** is a function that is not a member of a class but has access to its private and protected members. It is declared in the class using the `friend` keyword.
+
+#### **Key Points**
+- A friend function is not a member of the class but can access its private and protected members.
+- It is declared inside the class but defined outside.
+- It can be a normal function or a member function of another class.
+
+---
+
+#### **Example of Friend Function**
+```cpp
+#include <iostream>
+using namespace std;
+
+class Box {
+private:
+    double width;
+
+public:
+    Box(double w) : width(w) {}
+
+    // Declare a friend function
+    friend void printWidth(Box b);
+};
+
+// Friend function definition
+void printWidth(Box b) {
+    cout << "Width of the box: " << b.width << endl;  // Access private member
+}
+
+int main() {
+    Box b(10.5);
+    printWidth(b);  // Call the friend function
+    return 0;
+}
+```
+
+**Output**:
+```plaintext
+Width of the box: 10.5
+```
+
+**Explanation**:
+- The `printWidth` function is declared as a friend of the `Box` class.
+- It can access the private member `width` of the `Box` class.
+
+---
+
+### **2. Friend Class**
+
+A **friend class** is a class that is allowed to access the private and protected members of another class. This is useful when two classes need to work closely together.
+
+#### **Key Points**
+- A friend class is declared using the `friend` keyword inside the class whose private members it needs to access.
+- Friendship is **not reciprocal**: If `ClassA` is a friend of `ClassB`, `ClassB` does not automatically become a friend of `ClassA`.
+
+---
+
+#### **Example of Friend Class**
+```cpp
+#include <iostream>
+using namespace std;
+
+class Engine {
+private:
+    int horsepower;
+
+public:
+    Engine(int hp) : horsepower(hp) {}
+
+    // Declare Car as a friend class
+    friend class Car;
+};
+
+class Car {
+public:
+    void showEngineDetails(Engine e) {
+        cout << "Engine horsepower: " << e.horsepower << endl;  // Access private member
+    }
+};
+
+int main() {
+    Engine e(300);
+    Car c;
+    c.showEngineDetails(e);  // Car can access Engine's private members
+    return 0;
+}
+```
+
+**Output**:
+```plaintext
+Engine horsepower: 300
+```
+
+**Explanation**:
+- The `Car` class is declared as a friend of the `Engine` class.
+- The `Car` class can access the private member `horsepower` of the `Engine` class.
+
+---
+
+### **3. Important Concepts and Use Cases**
+
+#### **When to Use Friend Functions and Classes**
+- **Tightly Coupled Classes**:
+  - When two classes need to work closely together and share private data.
+  - Example: A `Car` class accessing private details of an `Engine` class.
+- **Operator Overloading**:
+  - Friend functions are often used to overload operators that require access to private members of a class.
+  - Example: Overloading the `<<` or `>>` operators for input/output.
+
+---
+
+#### **Friend Function for Operator Overloading**
+```cpp
+#include <iostream>
+using namespace std;
+
+class Complex {
+private:
+    double real, imag;
+
+public:
+    Complex(double r, double i) : real(r), imag(i) {}
+
+    // Declare friend function for overloading <<
+    friend ostream& operator<<(ostream& out, const Complex& c);
+};
+
+// Friend function definition
+ostream& operator<<(ostream& out, const Complex& c) {
+    out << c.real << " + " << c.imag << "i";
+    return out;
+}
+
+int main() {
+    Complex c(3.5, 2.5);
+    cout << c << endl;  // Calls the friend function
+    return 0;
+}
+```
+
+**Output**:
+```plaintext
+3.5 + 2.5i
+```
+
+**Explanation**:
+- The `operator<<` function is declared as a friend of the `Complex` class.
+- It can access the private members `real` and `imag` of the `Complex` class.
+
+---
+
+#### **Friendship is Not Inherited**
+- If `ClassA` is a friend of `ClassB`, and `ClassB` is a base class of `ClassC`, `ClassA` does not automatically become a friend of `ClassC`.
+
+---
+
+#### **Friendship is Not Reciprocal**
+- If `ClassA` declares `ClassB` as a friend, `ClassB` does not automatically declare `ClassA` as a friend.
+
+---
+
+#### **Friendship is Not Transitive**
+- If `ClassA` is a friend of `ClassB`, and `ClassB` is a friend of `ClassC`, `ClassA` is not automatically a friend of `ClassC`.
+
+---
+
+### **4. Advantages and Disadvantages**
+
+#### **Advantages**
+1. **Access Control**:
+   - Allows controlled access to private members without exposing them to the entire program.
+2. **Flexibility**:
+   - Useful for operator overloading and tightly coupled classes.
+
+#### **Disadvantages**
+1. **Breaks Encapsulation**:
+   - Friendship violates the principle of encapsulation by exposing private members.
+2. **Tight Coupling**:
+   - Makes classes tightly coupled, which can reduce modularity and make the code harder to maintain.
+
+---
+
+### **5. Summary**
+
+| **Aspect**              | **Friend Function**                                   | **Friend Class**                                   |
+|-------------------------|------------------------------------------------------|--------------------------------------------------|
+| **Definition**          | A function that can access private/protected members of a class. | A class that can access private/protected members of another class. |
+| **Declaration**         | Declared using `friend` inside the class.            | Declared using `friend` inside the class.        |
+| **Use Case**            | Operator overloading, accessing private data.        | Tightly coupled classes that need to share data. |
+| **Scope**               | Only the specific function is granted access.        | All member functions of the friend class are granted access. |
+
+---
+
+Let me know if you'd like further clarification or additional examples!---
 
 ### 13: Access Modifiers
 
@@ -1001,11 +1124,6 @@ Protected Variable: 2
 
 ---
 
-### Thanks for Reading 
-
-<img src="/assets/images/save.png" width="600" height="200">
-
----
 
 ### **2. What is a Virtual Destructor? How is it different from a Normal Destructor?**
 
@@ -1169,5 +1287,10 @@ Drawing a Rectangle
 
 ---
 
-Let me know if you'd like further clarification or additional examples!
+### Thanks for Reading 
+
+<img src="/assets/images/save.png" width="600" height="200">
+
+---
+
 
