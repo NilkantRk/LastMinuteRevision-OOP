@@ -727,59 +727,143 @@ int main()
 - Runtime polymorphism is also known as dynamic polymorphism or late binding. In runtime polymorphism, the function call is resolved at run time.
 - This type of polymorphism is achieved by Function Overriding or Virtual function.
 
-**Virtual Function**
-- Virtual is a keyword in C++
-- A virtual function is a member function in the base class that we expect to redefine in derived classes
-- When a virtual function is defined in a base class, then in runtime on the basis of type of object assigned to it, the respective class function is called.
+### **Virtual Function in C++**
+A **virtual function** is a member function in a base class that you can override in a derived class. It allows **runtime polymorphism**, meaning the function that gets called is determined at runtime based on the type of the object being pointed to, not the type of the pointer.
 
+#### **Key Points about Virtual Functions**
+1. Declared using the `virtual` keyword in the base class.
+2. Allows overriding in derived classes.
+3. Enables **dynamic dispatch** (runtime decision of which function to call).
+4. If a virtual function is not overridden in the derived class, the base class version is used.
 
-```C++
+---
+
+#### **Example of Virtual Function**
+```cpp
 #include <iostream>
 using namespace std;
 
 class Base {
-   public:
-    virtual void print() {
-        cout << "Base Class Function" << endl;
+public:
+    virtual void display() {  // Virtual function
+        cout << "Base class display function" << endl;
     }
 };
 
 class Derived : public Base {
-   public:
-    void print() {
-        cout << "Derived Class Function" << endl;
+public:
+    void display() override {  // Override the base class function
+        cout << "Derived class display function" << endl;
     }
 };
 
 int main() {
-    // Create the pointer of base class
-    Base* bptr;
-    // Create the object of base and derived class
-    Base base;
-    Derived derived;
-    
-    // In runtime, its depend on which class object
-    // we are assigning in base pointer.
-    
-    // Base Class print function will call,
-    // as we assign base class object
-    bptr = &base;
-    bptr->print();
-    
-    // Derived Class print function will call,
-    // as we assign derived class object
-    bptr = &derived;
-    bptr->print();
+    Base* basePtr;  // Pointer of type Base
+    Derived derivedObj;
+
+    basePtr = &derivedObj;
+    basePtr->display();  // Calls Derived's display() due to dynamic dispatch
 
     return 0;
 }
 ```
 
-**Output**
-> Base Class Function \
-Derived Class Function
+**Output**:
+```plaintext
+Derived class display function
+```
+
+**Explanation**:
+- The `display` function in the base class is declared as `virtual`.
+- When `basePtr` points to a `Derived` object, the `Derived` class's `display` function is called at runtime.
 
 ---
+
+### **Pure Virtual Function in C++**
+A **pure virtual function** is a virtual function that has no implementation in the base class. It is declared by assigning `= 0` to the function declaration. A class containing at least one pure virtual function is called an **abstract class**.
+
+#### **Key Points about Pure Virtual Functions**
+1. Declared using `= 0` in the base class.
+2. Forces derived classes to provide an implementation for the function.
+3. Abstract classes cannot be instantiated directly.
+4. Used to define interfaces or enforce a contract for derived classes.
+
+---
+
+#### **Example of Pure Virtual Function**
+```cpp
+#include <iostream>
+using namespace std;
+
+class Shape {
+public:
+    virtual void draw() = 0;  // Pure virtual function
+    virtual ~Shape() {}       // Virtual destructor
+};
+
+class Circle : public Shape {
+public:
+    void draw() override {
+        cout << "Drawing a Circle" << endl;
+    }
+};
+
+class Rectangle : public Shape {
+public:
+    void draw() override {
+        cout << "Drawing a Rectangle" << endl;
+    }
+};
+
+int main() {
+    Shape* shape1 = new Circle();
+    Shape* shape2 = new Rectangle();
+
+    shape1->draw();  // Calls Circle's draw()
+    shape2->draw();  // Calls Rectangle's draw()
+
+    delete shape1;
+    delete shape2;
+
+    return 0;
+}
+```
+
+**Output**:
+```plaintext
+Drawing a Circle
+Drawing a Rectangle
+```
+
+**Explanation**:
+- The `Shape` class contains a pure virtual function `draw()`, making it an abstract class.
+- The `Circle` and `Rectangle` classes override the `draw()` function.
+- The `Shape` class cannot be instantiated directly, but pointers to `Shape` can point to derived class objects.
+
+---
+
+### **Key Differences Between Virtual and Pure Virtual Functions**
+
+| **Aspect**                | **Virtual Function**                                   | **Pure Virtual Function**                              |
+|---------------------------|-------------------------------------------------------|-------------------------------------------------------|
+| **Definition**            | A function with a default implementation in the base class. | A function with no implementation in the base class (declared as `= 0`). |
+| **Purpose**               | Allows overriding but provides a default implementation. | Forces derived classes to implement the function.     |
+| **Base Class Instantiation** | The base class can be instantiated if it has no pure virtual functions. | The base class becomes abstract and cannot be instantiated. |
+| **Usage**                 | Used when some default behavior is needed in the base class. | Used to define interfaces or enforce implementation in derived classes. |
+
+---
+
+### **When to Use Virtual vs Pure Virtual Functions**
+- **Virtual Function**:
+  - Use when you want to provide a default implementation in the base class but allow derived classes to override it.
+  - Example: A `print()` function in a base class that prints generic information but can be overridden for specific details in derived classes.
+
+- **Pure Virtual Function**:
+  - Use when you want to enforce that all derived classes must implement the function.
+  - Example: A `draw()` function in a `Shape` class that must be implemented by all specific shapes like `Circle` or `Rectangle`.
+
+---
+
 
 ### 10: Abstract Class
 
