@@ -211,6 +211,17 @@ Gender = 1
 - Destructor neither requires any argument nor returns any value therefore it cannot be overloaded.
 - Destructor cannot be declared as static and const.
 - Destructor should be declared in the public section of the program.
+- When is a Destructor Most Useful?
+- A destructor is most useful in the following scenarios:
+
+- Releasing Dynamically Allocated Memory:
+  If a class allocates memory on the heap using new, the destructor ensures that the memory is properly released using delete.
+  Closing File Handles or Network Connections:
+ If a class opens a file or establishes a network connection, the destructor ensures that these resources are closed when the object is destroyed.
+- Avoiding Resource Leaks:
+  Destructors help prevent resource leaks by ensuring that all resources are released when the object is no longer needed.
+- RAII (Resource Acquisition Is Initialization):
+  Destructors are a key part of the RAII design pattern, where resource management is tied to the lifetime of an object.
 
 ```C++
 #include <iostream>
