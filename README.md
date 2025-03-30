@@ -1007,28 +1007,167 @@ Protected Variable: 2
 
 ---
 
-###
+### **2. What is a Virtual Destructor? How is it different from a Normal Destructor?**
 
-#### Join us for all the latest offcampus job updates, webinar, hackathons, resume review and a lot more :heart::heart:
-
-<div align="left">
-  <a href="https://www.linkedin.com/in/amanchowdhury046/" target="_blank">
-    <img src="https://img.shields.io/static/v1?message=LinkedIn&logo=linkedin&label=&color=0077B5&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="linkedin logo"  />
-  </a>
-  <a href="https://www.youtube.com/@amanchowdhury046" target="_blank">
-    <img src="https://img.shields.io/static/v1?message=Youtube&logo=youtube&label=&color=FF0000&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="youtube logo"  />
-  </a>
-  <a href="https://telegram.me/offcampus_phodenge" target="_blank">
-    <img src="https://img.shields.io/static/v1?message=Telegram&logo=telegram&label=&color=2CA5E0&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="telegram logo"  />
-  </a>
-  <a href="https://www.instagram.com/aman_chowdhury_046/" target="_blank">
-    <img src="https://img.shields.io/static/v1?message=Instagram&logo=instagram&label=&color=E4405F&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="instagram logo"  />
-  </a>
-  <a href="https://whatsapp.com/channel/0029Va9Q0lkDZ4LYNx6ukw2u" target="_blank">
-    <img src="https://img.shields.io/static/v1?message=Whatsapp&logo=Whatsapp&label=&color=25D366&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="whatsapp logo"  />
-  </a>
-</div>
-
-###
+A **virtual destructor** ensures that the destructor of the derived class is called when deleting an object through a base class pointer. Without a virtual destructor, only the base class destructor is called, which can lead to resource leaks if the derived class allocates resources.
 
 ---
+
+#### **Example Without Virtual Destructor**
+```cpp
+#include <iostream>
+using namespace std;
+
+class Base {
+public:
+    ~Base() {  // Normal destructor
+        cout << "Base destructor called" << endl;
+    }
+};
+
+class Derived : public Base {
+public:
+    ~Derived() {  // Destructor for Derived
+        cout << "Derived destructor called" << endl;
+    }
+};
+
+int main() {
+    Base* basePtr = new Derived();  // Base pointer pointing to Derived object
+    delete basePtr;  // Only Base destructor is called
+    return 0;
+}
+```
+
+**Output**:
+```plaintext
+Base destructor called
+```
+
+**Problem**:
+- The `Derived` destructor is not called, so any resources allocated in the `Derived` class are not released, leading to a **resource leak**.
+
+---
+
+#### **Example With Virtual Destructor**
+```cpp
+class Base {
+public:
+    virtual ~Base() {  // Virtual destructor
+        cout << "Base destructor called" << endl;
+    }
+};
+
+class Derived : public Base {
+public:
+    ~Derived() {
+        cout << "Derived destructor called" << endl;
+    }
+};
+
+int main() {
+    Base* basePtr = new Derived();
+    delete basePtr;  // Both Derived and Base destructors are called
+    return 0;
+}
+```
+
+**Output**:
+```plaintext
+Derived destructor called
+Base destructor called
+```
+
+**Explanation**:
+- The `virtual` keyword ensures that the destructor of the derived class is called first, followed by the base class destructor.
+- This prevents resource leaks and ensures proper cleanup.
+
+---
+
+#### **Key Difference**
+| **Aspect**              | **Normal Destructor**                              | **Virtual Destructor**                              |
+|-------------------------|---------------------------------------------------|---------------------------------------------------|
+| **Behavior**            | Only the base class destructor is called when deleting through a base class pointer. | Both the derived and base class destructors are called. |
+| **Use Case**            | Use when the class is not intended to be inherited. | Use when the class is intended to be inherited.   |
+
+---
+
+### **3. When is `Shape* shape1 = new Circle();` Useful?**
+
+This kind of code is useful in scenarios where **runtime polymorphism** is required. It allows you to write code that works with objects of different derived classes through a common base class interface.
+
+---
+
+#### **Example Use Case: Drawing Shapes**
+Suppose you are building a graphics application where you need to handle different shapes (e.g., `Circle`, `Rectangle`, `Triangle`). Instead of writing separate code for each shape, you can use a common interface (`Shape`) and achieve polymorphism.
+
+```cpp
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Shape {
+public:
+    virtual void draw() = 0;  // Pure virtual function
+    virtual ~Shape() {}
+};
+
+class Circle : public Shape {
+public:
+    void draw() override {
+        cout << "Drawing a Circle" << endl;
+    }
+};
+
+class Rectangle : public Shape {
+public:
+    void draw() override {
+        cout << "Drawing a Rectangle" << endl;
+    }
+};
+
+int main() {
+    vector<Shape*> shapes;  // Store pointers to different shapes
+
+    // Add shapes to the collection
+    shapes.push_back(new Circle());
+    shapes.push_back(new Rectangle());
+
+    // Draw all shapes
+    for (Shape* shape : shapes) {
+        shape->draw();  // Calls the appropriate draw() function
+    }
+
+    // Clean up
+    for (Shape* shape : shapes) {
+        delete shape;
+    }
+
+    return 0;
+}
+```
+
+**Output**:
+```plaintext
+Drawing a Circle
+Drawing a Rectangle
+```
+
+---
+
+#### **Why is This Useful?**
+1. **Flexibility**:
+   - You can add new shapes (e.g., `Triangle`) without modifying the existing code. Just create a new class that inherits from `Shape` and implements the `draw()` function.
+
+2. **Code Reusability**:
+   - The `draw()` function is called polymorphically, so you don't need to write separate code for each shape.
+
+3. **Real-World Applications**:
+   - **Graphics Libraries**: Handling different types of graphical objects (e.g., shapes, buttons, widgets).
+   - **Game Development**: Managing different types of game entities (e.g., players, enemies, obstacles).
+   - **UI Frameworks**: Managing different UI components (e.g., text boxes, buttons, sliders).
+
+---
+
+Let me know if you'd like further clarification or additional examples!
+
